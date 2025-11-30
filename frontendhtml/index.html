@@ -356,13 +356,13 @@
     }
     
     .input-field::placeholder {
-      color: rgba(255, 255, 255, 0.52);
+      color: rgba(236, 137, 137, 0.52);
     }
     
     .input-field:focus {
       outline: none;
       border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(145, 211, 70, 0.06);
       box-shadow: 0 0 0 6px rgba(14,165,163,0.05);
     }
     
@@ -1231,13 +1231,21 @@
         const res = await fetch(`${API_BASE}/dashboard`);
         const data = await res.json();
         
-        document.getElementById('stat-total').textContent = (data.total_crimes || 0).toLocaleString();
-        document.getElementById('stat-areas').textContent = data.cached_clusters || 0;
-        document.getElementById('stat-avg-risk').textContent = data.average_risk || 0;
-        document.getElementById('stat-recent').textContent = (data.recent_crimes_30d || 0).toLocaleString();
-        
+        document.getElementById('stat-total').textContent = 
+        (data.total_crimes || 0).toLocaleString();
+
+        document.getElementById('stat-areas').textContent = 
+            data.zones_count || 0;
+
+        document.getElementById('stat-avg-risk').textContent = 
+            data.average_risk || 0;
+
+        document.getElementById('stat-recent').textContent = 
+            (data.recent_30_days || 0).toLocaleString();
+
         renderRiskyZones(data.top_risky || []);
         loadCrimeTrends();
+
         
       } catch (error) {
         console.error('Dashboard error:', error);
