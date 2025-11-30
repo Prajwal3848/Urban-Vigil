@@ -874,40 +874,34 @@
     async function reverseGeocode(lat, lon) {
       const key = `${lat.toFixed(5)},${lon.toFixed(5)}`;
 
-      // Serve from cache instantly
       if (geocodeCache[key]) return geocodeCache[key];
 
       try {
           const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
-
-          const response = await fetch(url, {
-              headers: { "User-Agent": "UrbanVigil/1.0 (contact: no-reply)" }
+          const res = await fetch(url, {
+              headers: { "User-Agent": "UrbanVigil/1.0 (no-reply)" }
           });
-
-          const data = await response.json();
+          const data = await res.json();
 
           let area =
               data?.address?.suburb ||
               data?.address?.neighbourhood ||
+              data?.address?.municipality ||
               data?.address?.village ||
               data?.address?.town ||
               data?.address?.city ||
               data?.address?.county ||
               "Unknown Area";
 
-          // Cache it
           geocodeCache[key] = area;
-
           return area;
 
-      } catch (e) {
-          console.warn("Reverse geocode failed:", e);
+      } catch (err) {
+          console.warn("Reverse geocode failed:", err);
           return "Unknown Area";
       }
-    }
+  }
 
-
-    
     // Send push notification - NEW
     function sendPushNotification(title, body, risk) {
       if ('Notification' in window && Notification.permission === 'granted') {
@@ -1292,36 +1286,46 @@
     }
     
     async function renderRiskyZones(list) {
-      const container = document.getElementById("risk-zones-list"); // <-- USE YOUR REAL ID
+      const container = document.getElementById("risk-zones-list");
 
       if (!container) {
-          console.error("High Risk Zone container not found in DOM.");
+          console.error("risk-zones-list NOT FOUND");
           return;
       }
 
-      container.innerHTML = "";
+      container.innerHTML = "";   // Clear skeletons
 
       if (!list || list.length === 0) {
-          container.innerHTML = "<p>No data available</p>";
+          container.innerHTML = `<p class="text-gray-300">No data available</p>`;
           return;
       }
 
       for (let i = 0; i < list.length; i++) {
           const item = list[i];
-
-          // Reverse geocode with cache
           const areaName = await reverseGeocode(item.lat, item.lon);
 
-          container.innerHTML += `
-              <div class="risk-zone-item">
-                  <div class="risk-rank">${i + 1}</div>
+          const crime = item.most_common;
+          const incidents = item.crime_count;
+          const risk = item.risk_score;
 
-                  <div class="risk-info">
-                      <h4>${areaName}</h4>
-                      <p>${item.most_common} • ${item.crime_count} incidents</p>
+          container.innerHTML += `
+              <div class="glass-subcard p-4 rounded-xl flex items-center justify-between fade-in">
+                  
+                  <div class="flex items-start space-x-4">
+                      <div class="h-10 w-10 flex items-center justify-center rounded-full bg-red-500 text-white font-bold">
+                          ${i + 1}
+                      </div>
+
+                      <div>
+                          <h3 class="text-lg font-semibold">${areaName}</h3>
+                          <p class="text-sm text-gray-200">${crime} • ${incidents} incidents</p>
+                      </div>
                   </div>
 
-                  <div class="risk-score">${item.risk_score}</div>
+                  <div class="text-right">
+                      <span class="text-xl font-bold text-red-400">${risk}</span>
+                      <div class="text-xs text-red-300">High Risk</div>
+                  </div>
               </div>
           `;
       }
