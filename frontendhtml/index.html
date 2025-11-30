@@ -799,6 +799,8 @@
     
     console.log('🚀 Urban Vigil Pro v2.0');
     console.log('📡 Backend:', API_BASE);
+    const geocodeCache = {};
+
     
     // State
     let state = {
@@ -870,31 +872,40 @@
     }
 
     async function reverseGeocode(lat, lon) {
+      const key = `${lat.toFixed(5)},${lon.toFixed(5)}`;
+
+      // Serve from cache instantly
+      if (geocodeCache[key]) return geocodeCache[key];
+
       try {
           const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+
           const response = await fetch(url, {
-              headers: { "User-Agent": "UrbanVigil/1.0 (no-reply)" }
+              headers: { "User-Agent": "UrbanVigil/1.0 (contact: no-reply)" }
           });
+
           const data = await response.json();
 
-          if (data && data.address) {
-              // Preferred readable fields
-              return (
-                  data.address.suburb ||
-                  data.address.neighbourhood ||
-                  data.address.village ||
-                  data.address.town ||
-                  data.address.city ||
-                  data.address.county ||
-                  "Unknown Area"
-              );
-          }
-          return "Unknown Area";
+          let area =
+              data?.address?.suburb ||
+              data?.address?.neighbourhood ||
+              data?.address?.village ||
+              data?.address?.town ||
+              data?.address?.city ||
+              data?.address?.county ||
+              "Unknown Area";
+
+          // Cache it
+          geocodeCache[key] = area;
+
+          return area;
+
       } catch (e) {
           console.warn("Reverse geocode failed:", e);
           return "Unknown Area";
       }
     }
+
 
     
     // Send push notification - NEW
@@ -1281,34 +1292,41 @@
     }
     
     async function renderRiskyZones(list) {
-        const container = document.getElementById("high-risk-zones");
-        container.innerHTML = "";
+      const container = document.getElementById("risk-zones-list"); // <-- USE YOUR REAL ID
 
-        if (!list || list.length === 0) {
-            container.innerHTML = "<p>No data available</p>";
-            return;
-        }
+      if (!container) {
+          console.error("High Risk Zone container not found in DOM.");
+          return;
+      }
 
-        for (let i = 0; i < list.length; i++) {
-            const item = list[i];
+      container.innerHTML = "";
 
-            // Reverse geocode every zone's lat/lon
-            const areaName = await reverseGeocode(item.lat, item.lon);
+      if (!list || list.length === 0) {
+          container.innerHTML = "<p>No data available</p>";
+          return;
+      }
 
-            container.innerHTML += `
-                <div class="risk-zone-item">
-                    <div class="risk-rank">${i + 1}</div>
+      for (let i = 0; i < list.length; i++) {
+          const item = list[i];
 
-                    <div class="risk-info">
-                        <h4>${areaName}</h4>
-                        <p>${item.most_common} • ${item.crime_count} incidents</p>
-                    </div>
+          // Reverse geocode with cache
+          const areaName = await reverseGeocode(item.lat, item.lon);
 
-                    <div class="risk-score">${item.risk_score}</div>
-                </div>
-            `;
-        }
-    }
+          container.innerHTML += `
+              <div class="risk-zone-item">
+                  <div class="risk-rank">${i + 1}</div>
+
+                  <div class="risk-info">
+                      <h4>${areaName}</h4>
+                      <p>${item.most_common} • ${item.crime_count} incidents</p>
+                  </div>
+
+                  <div class="risk-score">${item.risk_score}</div>
+              </div>
+          `;
+      }
+  }
+
 
     async function loadHeatmap() {
       try {
