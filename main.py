@@ -375,7 +375,12 @@ def predict(body: PredictBody = None,
 def heatmap(limit: int = Query(800, ge=50, le=5000)):
     pts: List[Dict[str, Any]] = []
     try:
-        # 'limit' is now guaranteed to be an integer
+        # Force integer conversion (handles strings, blanks, trailing "&")
+        try:
+            limit = int(limit)
+        except:
+            limit = 800  # fallback if invalid
+
         for v in list(location_cache.values())[:limit]:
             rs = compute_risk(v["lat"], v["lon"])
             pts.append({
@@ -385,14 +390,17 @@ def heatmap(limit: int = Query(800, ge=50, le=5000)):
                 "crime_count": v.get("crime_count", 0),
                 "most_common": v.get("most_common", "Unknown")
             })
+
     except Exception as e:
         logger.exception("Error building heatmap payload: %s", e)
 
     max_r = max((p["risk_score"] for p in pts), default=1)
+
     for p in pts:
         p["intensity"] = (p["risk_score"] / max_r) if max_r > 0 else 0.1
 
     return {"heatmap": pts, "total": len(pts)}
+
 
 
 @app.get("/api/zones")
