@@ -1455,6 +1455,41 @@
         { enableHighAccuracy: true, timeout: 8000 }
       );
     });
+
+    function parseRouteInfo(data) {
+
+  // 1) Distance
+  let distanceKm = null;
+
+  if (typeof data.distance_km === 'number') {
+    distanceKm = data.distance_km; // fallback mode
+  } 
+  else if (typeof data.distance_m === 'number') {
+    distanceKm = data.distance_m / 1000; // OSRM mode
+  }
+
+  // 2) Duration
+  let durationMin = null;
+
+  if (typeof data.duration_min === 'number') {
+    durationMin = data.duration_min; // if backend ever adds it
+  }
+  else if (typeof data.duration_s === 'number') {
+    durationMin = data.duration_s / 60; // OSRM mode
+  }
+  else if (distanceKm !== null) {
+    // Fallback: approximate speed 30 km/h
+    durationMin = (distanceKm / 30) * 60;
+  }
+
+  return {
+    distanceKm,
+    durationMin,
+    avgRisk: data.average_risk ?? 50,
+    note: data.note ?? ""
+  };
+}
+
     
     // Route planning
     document.getElementById('route-form')?.addEventListener('submit', async (e) => {
@@ -1586,37 +1621,42 @@
         
         // Display info
         const infoDiv = document.getElementById('route-info');
-        const avgRisk = data.average_risk || 50;
+
+        const { distanceKm, durationMin, avgRisk, note } = parseRouteInfo(data);
         const routeColor = getRiskColor(avgRisk);
         const badge = getRiskBadgeClass(avgRisk);
-        
+
         infoDiv.innerHTML = `
           <div class="glass-card p-5 rounded-xl space-y-4">
+
             <div class="flex items-center justify-between pb-4 border-b border-white/12">
               <span class="text-sm text-white/70 font-medium">Safety Score</span>
               <div class="text-4xl font-bold" style="color:${routeColor}">${avgRisk}</div>
             </div>
-            
+
             <div class="space-y-3 text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-white/70">📏 Distance</span>
-                <span class="font-bold text-lg">${data.distance_km ? data.distance_km.toFixed(2) + ' km' : 'N/A'}</span>
+                <span class="font-bold text-lg">${distanceKm ? distanceKm.toFixed(2) + ' km' : 'N/A'}</span>
               </div>
+
               <div class="flex items-center justify-between">
                 <span class="text-white/70">⏱️ Duration</span>
-                <span class="font-bold text-lg">${data.duration_min ? Math.round(data.duration_min) + ' min' : (data.duration_s ? Math.round(data.duration_s/60) + ' min' : 'N/A')}</span>
+                <span class="font-bold text-lg">${durationMin ? Math.round(durationMin) + ' min' : 'N/A'}</span>
               </div>
+
               <div class="flex items-center justify-between">
                 <span class="text-white/70">🛡️ Safety</span>
                 <span class="risk-badge ${badge}">${getRiskLabel(avgRisk)}</span>
               </div>
             </div>
-            
-            ${data.note ? `<div class="pt-3 border-t border-white/12"><p class="text-xs text-white/60">${data.note}</p></div>` : ''}
+
+            ${note ? `<div class="pt-3 border-t border-white/12"><p class="text-xs text-white/60">${note}</p></div>` : ''}
           </div>
         `;
-        
+
         infoDiv.classList.remove('hidden');
+
         
         // Route details
         const detailsDiv = document.getElementById('route-details');
