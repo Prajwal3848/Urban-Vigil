@@ -868,6 +868,34 @@
         });
       }
     }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+          const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+          const response = await fetch(url, {
+              headers: { "User-Agent": "UrbanVigil/1.0 (no-reply)" }
+          });
+          const data = await response.json();
+
+          if (data && data.address) {
+              // Preferred readable fields
+              return (
+                  data.address.suburb ||
+                  data.address.neighbourhood ||
+                  data.address.village ||
+                  data.address.town ||
+                  data.address.city ||
+                  data.address.county ||
+                  "Unknown Area"
+              );
+          }
+          return "Unknown Area";
+      } catch (e) {
+          console.warn("Reverse geocode failed:", e);
+          return "Unknown Area";
+      }
+    }
+
     
     // Send push notification - NEW
     function sendPushNotification(title, body, risk) {
@@ -1252,36 +1280,36 @@
       }
     }
     
-    function renderRiskyZones(zones) {
-      const container = document.getElementById('risk-zones-list');
-      if (!zones || !zones.length) {
-        container.innerHTML = '<p class="text-white/60 text-center py-8">No data available</p>';
-        return;
-      }
-      
-      container.innerHTML = zones.map((zone, i) => {
-        const color = getRiskColor(zone.risk_score);
-        const badge = getRiskBadgeClass(zone.risk_score);
-        const gradients = ['from-red-500 to-rose-600','from-orange-500 to-amber-600','from-yellow-500 to-orange-500','from-blue-500 to-cyan-500','from-teal-400 to-indigo-700'];
-        
-        return `
-          <div class="glass-card p-5 rounded-xl hover:bg-white/06 transition-all cursor-pointer">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${gradients[i % gradients.length]} flex items-center justify-center font-bold text-white text-lg shadow-lg">${i + 1}</div>
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-base truncate">${zone.most_common || 'Area ' + (i+1)}</h3>
-                <p class="text-sm text-white/60">${zone.crime_count || 0} incidents</p>
-              </div>
-              <div class="text-right">
-                <div class="text-3xl font-bold" style="color: ${color}">${zone.risk_score}</div>
-                <span class="risk-badge ${badge} text-xs mt-1">${getRiskLabel(zone.risk_score)}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+    async function renderRiskyZones(list) {
+        const container = document.getElementById("high-risk-zones");
+        container.innerHTML = "";
+
+        if (!list || list.length === 0) {
+            container.innerHTML = "<p>No data available</p>";
+            return;
+        }
+
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+
+            // Reverse geocode every zone's lat/lon
+            const areaName = await reverseGeocode(item.lat, item.lon);
+
+            container.innerHTML += `
+                <div class="risk-zone-item">
+                    <div class="risk-rank">${i + 1}</div>
+
+                    <div class="risk-info">
+                        <h4>${areaName}</h4>
+                        <p>${item.most_common} • ${item.crime_count} incidents</p>
+                    </div>
+
+                    <div class="risk-score">${item.risk_score}</div>
+                </div>
+            `;
+        }
     }
-    
+
     async function loadHeatmap() {
       try {
         const res = await fetch(`${API_BASE}/heatmap?limit=400`);
