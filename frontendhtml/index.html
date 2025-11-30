@@ -21,7 +21,8 @@
     
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      /* changed palette to teal -> indigo */
+      background: linear-gradient(135deg, #0ea5a3 0%, #1e40af 100%);
       color: #fff;
       overflow-x: hidden;
       position: relative;
@@ -34,7 +35,7 @@
       background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
-      opacity: 0.3;
+      opacity: 0.22;
     }
     
     main { position: relative; z-index: 1; }
@@ -43,7 +44,7 @@
     #loading-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
@@ -60,7 +61,7 @@
     .loader {
       width: 60px;
       height: 60px;
-      border: 6px solid rgba(255,255,255,0.2);
+      border: 6px solid rgba(255,255,255,0.12);
       border-top: 6px solid #fff;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -89,24 +90,24 @@
     }
     
     .onboarding-content {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
       padding: 2rem;
-      max-width: 500px;
+      max-width: 520px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
     
     /* Page Transitions - NEW */
     .page {
-      animation: fadeIn 0.4s ease-in-out;
+      animation: fadeIn 0.36s ease-in-out;
     }
     
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
       }
       to {
         opacity: 1;
@@ -115,31 +116,31 @@
     }
     
     .glass-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .glass-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
+      border-color: rgba(255, 255, 255, 0.12);
     }
     
     .glass-nav {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     }
     
     .btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.72rem 1.25rem;
       border-radius: 12px;
       font-weight: 600;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
       cursor: pointer;
       border: none;
       position: relative;
@@ -154,94 +155,81 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.16);
       transform: translate(-50%, -50%);
       transition: width 0.6s, height 0.6s;
     }
     
     .btn:hover::before {
-      width: 300px;
-      height: 300px;
+      width: 260px;
+      height: 260px;
     }
     
+    /* Primary theme -> teal / indigo */
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #0ea5a3 0%, #1e40af 100%);
       color: white;
-      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 22px rgba(14,165,163,0.18);
     }
     
     .btn-primary:hover {
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 12px 32px rgba(30,64,175,0.18);
       transform: translateY(-2px);
     }
     
     .btn-primary:disabled {
-      opacity: 0.6;
+      opacity: 0.62;
       cursor: not-allowed;
       transform: none;
     }
     
     .btn-location {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
       color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
     
     .btn-location:hover {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
     }
+    
+    .btn-ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:0.6rem 1rem; border-radius:10px; }
     
     #map, #route-map {
       height: 600px;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(255, 255, 255, 0.06);
       overflow: hidden;
     }
     
     .stat-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1.25rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       position: relative;
       overflow: hidden;
     }
     
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .stat-card:hover::before {
-      opacity: 1;
-    }
-    
     .stat-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+      border-color: rgba(255, 255, 255, 0.12);
     }
     
     .stat-icon {
       width: 56px;
       height: 56px;
-      border-radius: 16px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
     }
     
     .risk-badge {
@@ -252,30 +240,30 @@
       border-radius: 12px;
       font-size: 0.75rem;
       font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
       animation: badge-pulse 2s ease-in-out infinite;
     }
     
     @keyframes badge-pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50% { transform: scale(1.04); }
     }
     
     .risk-low { 
       background: linear-gradient(135deg, #10b981, #059669);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.24);
     }
     .risk-medium { 
       background: linear-gradient(135deg, #f59e0b, #d97706);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.24);
     }
     .risk-high { 
       background: linear-gradient(135deg, #ef4444, #dc2626);
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.24);
     }
     
     .skeleton {
-      background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.06) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s ease-in-out infinite;
       border-radius: 8px;
@@ -302,26 +290,26 @@
     }
     
     .leaflet-popup-content-wrapper {
-      background: rgba(30, 30, 60, 0.95);
-      backdrop-filter: blur(16px);
+      background: rgba(20, 24, 37, 0.95);
+      backdrop-filter: blur(12px);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
     
     .leaflet-popup-tip {
-      background: rgba(30, 30, 60, 0.95);
+      background: rgba(20, 24, 37, 0.95);
     }
     
     .tab-btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
       font-weight: 600;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       background: transparent;
       border: none;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.78);
       cursor: pointer;
       position: relative;
     }
@@ -329,76 +317,73 @@
     .tab-btn::after {
       content: '';
       position: absolute;
-      bottom: -2px;
+      bottom: -4px;
       left: 50%;
       width: 0;
       height: 3px;
-      background: linear-gradient(90deg, #667eea, #764ba2);
+      background: linear-gradient(90deg, #0ea5a3, #1e40af);
       transform: translateX(-50%);
-      transition: width 0.3s ease;
+      transition: width 0.28s ease;
       border-radius: 3px;
     }
     
     .tab-btn:hover {
       color: white;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
     }
     
     .tab-btn.active {
       color: white;
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
     }
     
     .tab-btn.active::after {
-      width: 80%;
+      width: 60%;
     }
     
     .input-field {
       width: 100%;
       padding: 0.875rem 1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       color: white;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-size: 0.95rem;
+      max-height: 220px; /* helps drop-down when rendered as custom list */
+      overflow-y: auto;
     }
     
     .input-field::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.52);
     }
     
     .input-field:focus {
       outline: none;
-      border-color: rgba(255, 255, 255, 0.5);
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 0 6px rgba(14,165,163,0.05);
     }
     
     .spinner {
-      border: 3px solid rgba(255, 255, 255, 0.3);
+      border: 3px solid rgba(255, 255, 255, 0.12);
       border-top: 3px solid white;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       animation: spin 0.8s linear infinite;
       display: inline-block;
     }
     
     .route-instruction {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 0.75rem;
-      transition: all 0.2s ease;
-    }
-    
-    .route-instruction:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateX(4px);
+      transition: all 0.14s ease;
     }
     
     .pulse-dot {
@@ -411,13 +396,13 @@
         opacity: 1;
       }
       50% {
-        transform: scale(1.2);
-        opacity: 0.8;
+        transform: scale(1.12);
+        opacity: 0.85;
       }
     }
     
     .gradient-text {
-      background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #e0fdfd 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -425,19 +410,22 @@
     
     /* Police Station Card - NEW */
     .police-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       padding: 0.875rem;
       margin-bottom: 0.75rem;
-      transition: all 0.2s ease;
+      transition: all 0.14s ease;
     }
     
     .police-card:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
       transform: translateX(4px);
     }
+    
+    /* Make select scrollable on platforms that support it */
+    select.input-field { overflow-y: auto; max-height: 240px; }
     
     @media (max-width: 768px) {
       #map, #route-map { height: 450px; }
@@ -448,7 +436,7 @@
     @media (max-width: 400px) {
       .stat-card { padding: 0.75rem; }
       .stat-icon { width: 48px; height: 48px; margin-bottom: 0.5rem; }
-      .stat-card h3 { font-size: 1.5rem; }
+      .stat-card h3 { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -466,7 +454,7 @@
   <div id="onboarding-modal" class="hidden">
     <div class="onboarding-content">
       <div class="text-center">
-        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-teal-400 to-indigo-700 rounded-full flex items-center justify-center">
           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
@@ -514,7 +502,7 @@
     <section id="page-dashboard" class="space-y-8">
       
       <!-- Real-time Risk Alert - NEW -->
-      <div id="realtime-alert" class="hidden glass-card p-5 rounded-2xl border-2 border-yellow-400/50">
+      <div id="realtime-alert" class="hidden glass-card p-5 rounded-2xl border-2 border-yellow-400/30">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center">
             <svg class="w-8 h-8 text-white pulse-dot" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -562,7 +550,7 @@
         </div>
         
         <div class="stat-card">
-          <div class="stat-icon bg-gradient-to-br from-purple-500 to-pink-600">
+          <div class="stat-icon bg-gradient-to-br from-indigo-500 to-indigo-600">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
@@ -597,7 +585,7 @@
           <div class="glass-card p-6 md:p-8 rounded-2xl">
             <h2 class="text-2xl font-bold mb-6 gradient-text">Emergency</h2>
             <div class="space-y-3">
-              <a href="tel:100" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/10 transition-all">
+              <a href="tel:100" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/06 transition-all">
                 <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -609,7 +597,7 @@
                 </div>
               </a>
               
-              <a href="tel:112" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/10 transition-all">
+              <a href="tel:112" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/06 transition-all">
                 <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -621,7 +609,7 @@
                 </div>
               </a>
               
-              <a href="tel:1091" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/10 transition-all">
+              <a href="tel:1091" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/06 transition-all">
                 <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -633,7 +621,7 @@
                 </div>
               </a>
               
-              <a href="tel:108" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/10 transition-all">
+              <a href="tel:108" class="flex items-center gap-4 p-4 glass-card rounded-xl hover:bg-white/06 transition-all">
                 <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -689,16 +677,18 @@
             </select>
           </div>
           
-          <div class="text-center text-sm text-white/50 my-2">OR Coordinates</div>
-          
+          <div class="text-center text-sm text-white/50 my-2">OR Use your current device location</div>
+
           <div>
-            <label class="block text-sm text-white/70 mb-2 font-medium">Latitude</label>
-            <input id="map-lat" type="number" step="0.0001" value="12.9716" class="input-field" placeholder="12.9716">
-          </div>
-          
-          <div>
-            <label class="block text-sm text-white/70 mb-2 font-medium">Longitude</label>
-            <input id="map-lon" type="number" step="0.0001" value="77.5946" class="input-field" placeholder="77.5946">
+            <button id="btn-use-current-map" class="btn btn-location w-full">
+              <span class="relative z-10 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+                Use Current Location
+              </span>
+            </button>
+            <p id="map-current-hint" class="text-xs text-white/60 mt-2 hidden">Using device location...</p>
           </div>
           
           <div>
@@ -706,11 +696,11 @@
             <input id="map-time" type="time" class="input-field">
           </div>
           
-          <button id="btn-check-risk" class="btn btn-primary w-full"><span class="relative z-10">Check Risk Now</span></button>
+          <button id="btn-check-risk" class="btn btn-primary w-full mt-2"><span class="relative z-10">Check Risk Now</span></button>
           
           <div id="map-result" class="hidden mt-4 p-5 glass-card rounded-xl"></div>
           
-          <div class="mt-6 pt-4 border-t border-white/20">
+          <div class="mt-6 pt-4 border-t border-white/12">
             <h3 class="text-sm font-semibold mb-3">Risk Legend</h3>
             <div class="space-y-2 text-sm">
               <div class="flex items-center gap-2">
@@ -796,7 +786,7 @@
 
   </main>
 
-  <footer class="glass-card mt-16 py-8 border-t border-white/20">
+  <footer class="glass-card mt-16 py-8 border-t border-white/12">
     <div class="max-w-7xl mx-auto px-8 text-center">
       <p class="text-white/80 font-medium">© 2025 Urban Vigil Pro | AI-Powered Safety Intelligence</p>
       <p class="text-white/60 text-sm mt-2">Making Bengaluru safer through data-driven insights</p>
@@ -961,11 +951,18 @@
         attribution: '© OpenStreetMap'
       }).addTo(state.maps.main);
       
-      // Use marker clustering - NEW
+      // Use marker clustering - improved with chunkedLoading for performance
       state.layers.clusters = L.markerClusterGroup({
         maxClusterRadius: 50,
         spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false
+        showCoverageOnHover: false,
+        chunkedLoading: true,
+        chunkProgress: function(processed, total, elapsed) {
+          // optional: you could show progress if needed
+          if (elapsed > 1200) {
+            // console.log('cluster progress', processed, total);
+          }
+        }
       });
       state.maps.main.addLayer(state.layers.clusters);
       state.layers.markers = L.layerGroup().addTo(state.maps.main);
@@ -1031,8 +1028,9 @@
         const data = await res.json();
         
         const listDiv = document.getElementById('police-list');
-        if (data.nearest_stations && data.nearest_stations.length) {
-          listDiv.innerHTML = data.nearest_stations.map((station, i) => `
+        if (!listDiv) return;
+        if (data.nearest && data.nearest.length) {
+          listDiv.innerHTML = data.nearest.map((station, i) => `
             <div class="police-card">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg">
@@ -1048,6 +1046,8 @@
               </div>
             </div>
           `).join('');
+        } else {
+          listDiv.innerHTML = '<p class="text-sm text-white/60">No nearby stations found</p>';
         }
       } catch (error) {
         console.error('Police locator error:', error);
@@ -1068,9 +1068,10 @@
         
         ['map-place', 'route-src', 'route-dst'].forEach(id => {
           const select = document.getElementById(id);
-          if (select && places.length) {
+          if (select) {
+            // keep existing "Select ..." option, append others
             const options = places.map(p => `<option value="${p}">${p}</option>`).join('');
-            select.innerHTML += options;
+            select.insertAdjacentHTML('beforeend', options);
           }
         });
         
@@ -1082,20 +1083,21 @@
       }
     }
     
-    // Continue with all other functions from previous version...
-    // [The rest of the JavaScript code follows the same pattern]
-    // Due to length limits, I'll provide the key NEW features:
-    
     // Enhanced Risk Check with location name support
     document.getElementById('btn-check-risk')?.addEventListener('click', async () => {
       const locationName = document.getElementById('map-location-name').value.trim();
       const place = document.getElementById('map-place').value;
-      const lat = document.getElementById('map-lat').value;
-      const lon = document.getElementById('map-lon').value;
       const time = document.getElementById('map-time').value;
       
+      // Try to get coordinates from state.userLocation if available
+      let lat = null, lon = null;
+      if (state.userLocation) {
+        lat = state.userLocation.lat;
+        lon = state.userLocation.lon;
+      }
+      
       if (!locationName && !place && (!lat || !lon)) {
-        showNotification('Please enter a location name, select a place, or enter coordinates', 'warning');
+        showNotification('Please enter a location name, select a place, or use your device location', 'warning');
         return;
       }
       
@@ -1133,7 +1135,7 @@
         
         resultDiv.innerHTML = `
           <div class="space-y-4">
-            <div class="flex items-center justify-between pb-4 border-b border-white/20">
+            <div class="flex items-center justify-between pb-4 border-b border-white/12">
               <span class="text-sm text-white/70 font-medium">Risk Assessment</span>
               <div class="text-4xl font-bold" style="color:${color}">${data.risk_score}</div>
             </div>
@@ -1154,11 +1156,11 @@
             </div>
             
             ${data.recommendations?.length ? `
-              <div class="pt-4 border-t border-white/20">
+              <div class="pt-4 border-t border-white/12">
                 <h4 class="text-sm font-semibold mb-3 text-white/90">🛡️ Safety Recommendations:</h4>
                 <ul class="space-y-2 text-xs">
                   ${data.recommendations.map(r => `
-                    <li class="flex items-start gap-2 bg-white/5 p-2 rounded-lg">
+                    <li class="flex items-start gap-2 bg-white/04 p-2 rounded-lg">
                       <span class="text-yellow-400 mt-0.5">⚠️</span>
                       <span class="text-white/80">${r}</span>
                     </li>
@@ -1177,7 +1179,7 @@
           
           const icon = L.divIcon({
             className: '',
-            html: `<div style="background:${color};width:36px;height:36px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">✓</div>`,
+            html: `<div style="background:${color};width:36px;height:36px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">✓</div>`,
             iconSize: [36, 36]
           });
           
@@ -1193,11 +1195,34 @@
         
       } catch (error) {
         console.error('❌ Risk check error:', error);
-        showNotification('Failed to check risk: ' + error.message, 'error');
+        showNotification('Failed to check risk: ' + (error.message || error), 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalHTML;
       }
+    });
+    
+    // Map current location button handler
+    document.getElementById('btn-use-current-map')?.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        showNotification('Geolocation not supported', 'error');
+        return;
+      }
+      const hint = document.getElementById('map-current-hint');
+      hint.classList.remove('hidden');
+      navigator.geolocation.getCurrentPosition((pos) => {
+        state.userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        hint.textContent = `Using device location: ${state.userLocation.lat.toFixed(4)}, ${state.userLocation.lon.toFixed(4)}`;
+        showNotification('Device location acquired', 'success');
+        // show location on map
+        if (state.maps.main) {
+          const circle = L.circle([state.userLocation.lat, state.userLocation.lon], { radius: 120, color: '#06b6d4', weight: 2 }).addTo(state.maps.main);
+          state.maps.main.setView([state.userLocation.lat, state.userLocation.lon], 14);
+        }
+      }, (err) => {
+        hint.classList.add('hidden');
+        showNotification('Failed to get device location', 'error');
+      }, { enableHighAccuracy: true, timeout: 8000 });
     });
     
     // Load dashboard (includes all previous functionality)
@@ -1221,7 +1246,7 @@
     
     function renderRiskyZones(zones) {
       const container = document.getElementById('risk-zones-list');
-      if (!zones.length) {
+      if (!zones || !zones.length) {
         container.innerHTML = '<p class="text-white/60 text-center py-8">No data available</p>';
         return;
       }
@@ -1229,10 +1254,10 @@
       container.innerHTML = zones.map((zone, i) => {
         const color = getRiskColor(zone.risk_score);
         const badge = getRiskBadgeClass(zone.risk_score);
-        const gradients = ['from-red-500 to-rose-600','from-orange-500 to-amber-600','from-yellow-500 to-orange-500','from-blue-500 to-cyan-500','from-purple-500 to-pink-500'];
+        const gradients = ['from-red-500 to-rose-600','from-orange-500 to-amber-600','from-yellow-500 to-orange-500','from-blue-500 to-cyan-500','from-teal-400 to-indigo-700'];
         
         return `
-          <div class="glass-card p-5 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
+          <div class="glass-card p-5 rounded-xl hover:bg-white/06 transition-all cursor-pointer">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${gradients[i % gradients.length]} flex items-center justify-center font-bold text-white text-lg shadow-lg">${i + 1}</div>
               <div class="flex-1 min-w-0">
@@ -1251,7 +1276,7 @@
     
     async function loadHeatmap() {
       try {
-        const res = await fetch(`${API_BASE}/heatmap?limit=200`);
+        const res = await fetch(`${API_BASE}/heatmap?limit=400`);
         const data = await res.json();
         const heatmap = data.heatmap || [];
         
@@ -1259,11 +1284,11 @@
         
         heatmap.forEach(point => {
           const color = getRiskColor(point.risk_score);
-          const size = Math.min(28, 12 + point.risk_score / 5);
+          const size = Math.min(28, 10 + point.risk_score / 5);
           
           const icon = L.divIcon({
             className: '',
-            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:3px solid white;box-shadow:0 4px 16px rgba(0,0,0,0.4)"></div>`,
+            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:3px solid white;box-shadow:0 4px 16px rgba(0,0,0,0.32)"></div>`,
             iconSize: [size, size]
           });
           
@@ -1315,8 +1340,8 @@
           labels: labels,
           datasets: [{
             data: values,
-            backgroundColor: ['#ef4444','#f59e0b','#3b82f6','#10b981','#8b5cf6','#ec4899','#14b8a6','#f97316'],
-            borderColor: 'rgba(255, 255, 255, 0.2)',
+            backgroundColor: ['#ef4444','#f59e0b','#3b82f6','#10b981','#8b5cf6','#ec4899','#06b6d4','#f97316'],
+            borderColor: 'rgba(255, 255, 255, 0.08)',
             borderWidth: 2
           }]
         },
@@ -1326,10 +1351,10 @@
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#fff', padding: 16, font: { size: 12, family: 'Poppins' } }
+              labels: { color: '#fff', padding: 12, font: { size: 12, family: 'Poppins' } }
             },
             tooltip: {
-              backgroundColor: 'rgba(30, 30, 60, 0.95)',
+              backgroundColor: 'rgba(20, 24, 37, 0.95)',
               titleColor: '#fff',
               bodyColor: '#fff',
               padding: 12,
@@ -1340,7 +1365,7 @@
       });
     }
     
-    // Use current location button
+    // Use current location button for route page is already implemented below (btn-use-location)
     document.getElementById('btn-use-location')?.addEventListener('click', () => {
       if (!navigator.geolocation) {
         showNotification('Geolocation not supported', 'error');
@@ -1368,7 +1393,8 @@
         (error) => {
           console.error('Geolocation error:', error);
           showNotification('Failed to get location', 'error');
-        }
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
       );
     });
     
@@ -1422,6 +1448,8 @@
           coords = data.geometry.coordinates.map(c => [c[1], c[0]]);
         } else if (data.route_points) {
           coords = data.route_points.map(p => [p.lat, p.lon]);
+        } else if (data.samples) {
+          coords = data.samples.map(s => [s.lat, s.lon]);
         }
         
         if (coords.length) {
@@ -1432,21 +1460,21 @@
           L.polyline(coords, {
             color: '#000',
             weight: 8,
-            opacity: 0.3
+            opacity: 0.28
           }).addTo(state.layers.routes);
           
           // Main route
           L.polyline(coords, {
             color: routeColor,
-            weight: 6,
-            opacity: 0.9,
+            weight: 5,
+            opacity: 0.95,
             smoothFactor: 1
           }).addTo(state.layers.routes);
           
           // Animated overlay
           const animatedLine = L.polyline(coords, {
             color: '#fff',
-            weight: 6,
+            weight: 4,
             opacity: 0,
             dashArray: '10, 20',
             dashOffset: '0'
@@ -1454,21 +1482,21 @@
           
           let offset = 0;
           const animate = () => {
-            offset = (offset + 1) % 30;
-            animatedLine.setStyle({ dashOffset: offset, opacity: 0.3 });
+            offset = (offset + 1) % 40;
+            animatedLine.setStyle({ dashOffset: offset, opacity: 0.26 });
             requestAnimationFrame(animate);
           };
           animate();
           
           // Start marker
           const startIcon = L.divIcon({
-            html: `<div style="background:linear-gradient(135deg, #10b981, #059669);width:40px;height:40px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(16,185,129,0.5);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">A</div>`,
+            html: `<div style="background:linear-gradient(135deg, #10b981, #059669);width:40px;height:40px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(16,185,129,0.35);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">A</div>`,
             iconSize: [40, 40]
           });
           
           // End marker
           const endIcon = L.divIcon({
-            html: `<div style="background:linear-gradient(135deg, #ef4444, #dc2626);width:40px;height:40px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(239,68,68,0.5);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">B</div>`,
+            html: `<div style="background:linear-gradient(135deg, #ef4444, #dc2626);width:40px;height:40px;border-radius:50%;border:4px solid white;box-shadow:0 6px 20px rgba(239,68,68,0.35);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">B</div>`,
             iconSize: [40, 40]
           });
           
@@ -1480,21 +1508,20 @@
             .addTo(state.layers.routes)
             .bindPopup(`<div class="p-3"><b class="text-red-500">Destination</b></div>`);
           
-          // Risk points
-          if (data.samples) {
-            data.samples.forEach((sample, i) => {
-              if (i % 4 === 0 && i > 0 && i < data.samples.length - 1) {
-                const pointColor = getRiskColor(sample.risk);
-                const pointIcon = L.divIcon({
-                  html: `<div style="background:${pointColor};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`,
-                  iconSize: [14, 14]
-                });
-                L.marker([sample.lat, sample.lon], { icon: pointIcon })
-                  .addTo(state.layers.routes)
-                  .bindPopup(`<div class="text-center p-2 text-xs"><b>Risk:</b> ${sample.risk}</div>`);
-              }
-            });
-          }
+          // Risk points (samples)
+          const samples = data.samples || data.route_points || [];
+          samples.forEach((sample, i) => {
+            if (i % 4 === 0 && i > 0 && i < samples.length - 1) {
+              const pointColor = getRiskColor(sample.risk || sample.risk_score || 50);
+              const pointIcon = L.divIcon({
+                html: `<div style="background:${pointColor};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`,
+                iconSize: [14, 14]
+              });
+              L.marker([sample.lat, sample.lon], { icon: pointIcon })
+                .addTo(state.layers.routes)
+                .bindPopup(`<div class="text-center p-2 text-xs"><b>Risk:</b> ${sample.risk || sample.risk_score || 50}</div>`);
+            }
+          });
           
           state.maps.route.fitBounds(coords, { padding: [60, 60] });
         }
@@ -1507,7 +1534,7 @@
         
         infoDiv.innerHTML = `
           <div class="glass-card p-5 rounded-xl space-y-4">
-            <div class="flex items-center justify-between pb-4 border-b border-white/20">
+            <div class="flex items-center justify-between pb-4 border-b border-white/12">
               <span class="text-sm text-white/70 font-medium">Safety Score</span>
               <div class="text-4xl font-bold" style="color:${routeColor}">${avgRisk}</div>
             </div>
@@ -1519,7 +1546,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-white/70">⏱️ Duration</span>
-                <span class="font-bold text-lg">${data.duration_min ? Math.round(data.duration_min) + ' min' : 'N/A'}</span>
+                <span class="font-bold text-lg">${data.duration_min ? Math.round(data.duration_min) + ' min' : (data.duration_s ? Math.round(data.duration_s/60) + ' min' : 'N/A')}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-white/70">🛡️ Safety</span>
@@ -1527,7 +1554,7 @@
               </div>
             </div>
             
-            ${data.note ? `<div class="pt-3 border-t border-white/20"><p class="text-xs text-white/60">${data.note}</p></div>` : ''}
+            ${data.note ? `<div class="pt-3 border-t border-white/12"><p class="text-xs text-white/60">${data.note}</p></div>` : ''}
           </div>
         `;
         
@@ -1537,22 +1564,24 @@
         const detailsDiv = document.getElementById('route-details');
         const stepsDiv = document.getElementById('route-steps');
         
-        if (data.samples && data.samples.length > 0) {
-          const steps = data.samples.filter((_, i) => i % Math.ceil(data.samples.length / 6) === 0);
+        if ((data.samples && data.samples.length) || (data.route_points && data.route_points.length)) {
+          const srcSteps = data.samples && data.samples.length ? data.samples : data.route_points;
+          const steps = srcSteps.filter((_, i) => i % Math.ceil(srcSteps.length / 6) === 0);
           
           stepsDiv.innerHTML = steps.map((step, i) => {
-            const stepBadge = getRiskBadgeClass(step.risk);
+            const stepRisk = step.risk || step.risk_score || 50;
+            const stepBadge = getRiskBadgeClass(stepRisk);
             
             return `
               <div class="route-instruction">
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow-lg">${i + 1}</div>
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-white text-sm shadow-lg">${i + 1}</div>
                   <div class="flex-1">
                     <div class="flex items-center justify-between mb-1">
                       <span class="font-semibold text-sm">${i === 0 ? 'Start' : i === steps.length - 1 ? 'Destination' : `Checkpoint ${i}`}</span>
-                      <span class="risk-badge ${stepBadge} text-xs">${step.risk}</span>
+                      <span class="risk-badge ${stepBadge} text-xs">${stepRisk}</span>
                     </div>
-                    <div class="text-xs text-white/60">${step.lat.toFixed(4)}, ${step.lon.toFixed(4)}</div>
+                    <div class="text-xs text-white/60">${(step.lat || step.latitude).toFixed ? `${(step.lat || step.latitude).toFixed(4)}, ${(step.lon || step.longitude).toFixed(4)}` : ''}</div>
                   </div>
                 </div>
               </div>
@@ -1566,7 +1595,7 @@
         
       } catch (error) {
         console.error('❌ Route error:', error);
-        showNotification('Failed to calculate route: ' + error.message, 'error');
+        showNotification('Failed to calculate route: ' + (error.message || error), 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalHTML;
@@ -1600,9 +1629,9 @@
         setTimeout(() => {
           state.maps.main?.invalidateSize();
           loadHeatmap();
-        }, 100);
+        }, 120);
       } else if (page === 'route') {
-        setTimeout(() => state.maps.route?.invalidateSize(), 100);
+        setTimeout(() => state.maps.route?.invalidateSize(), 120);
       }
     }
     
@@ -1622,11 +1651,13 @@
       try {
         await Promise.all([
           loadPlaces(),
-          loadDashboard(),
-          loadHeatmap()
+          loadDashboard()
         ]);
         
-        // Check current location safety
+        // Defer heavy heatmap loading until after UI ready
+        setTimeout(() => loadHeatmap(), 500);
+        
+        // Check current location safety (non-blocking)
         checkCurrentLocationSafety();
         
         // Hide loading

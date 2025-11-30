@@ -206,70 +206,70 @@ def build_cache(df: pd.DataFrame):
 
 # ==================== DATA LOADING ====================
 def safe_loads():
-    """Load all data safely"""
-    global model, encoders, crime_mapping, place_lookup_df, crime_df
-    
-    # Load model
+    global model, encoders, place_lookup_df, crime_df, crime_mapping, location_cache, zones_cache
+    # model
     try:
         if os.path.exists(MODEL_PATH):
             model = joblib.load(MODEL_PATH)
-            logger.info(f"✅ Model loaded from {MODEL_PATH}")
+            logger.info("✅ Model loaded from %s", MODEL_PATH)
         else:
-            logger.warning(f"⚠️ Model not found at {MODEL_PATH}")
+            logger.warning("Model not found at %s", MODEL_PATH)
     except Exception as e:
-        logger.exception(f"❌ Model load error: {e}")
-    
-    # Load encoders
+        logger.exception("Failed to load model (continuing without model): %s", e)
+        model = None
+
+    # encoders
     try:
         if os.path.exists(ENCODER_PATH):
             encoders = joblib.load(ENCODER_PATH)
-            logger.info(f"✅ Encoders loaded: {list(encoders.keys())}")
+            logger.info("✅ Encoders loaded")
     except Exception as e:
-        logger.exception(f"❌ Encoder load error: {e}")
-    
-    # Load crime mapping
+        logger.debug("Encoders load error (continuing): %s", e)
+
+    # crime mapping json (optional)
     try:
         if os.path.exists(CRIME_MAP_PATH):
-            with open(CRIME_MAP_PATH, 'r') as f:
-                crime_mapping = json.load(f)
-            logger.info(f"✅ Crime mapping loaded: {len(crime_mapping)} entries")
+            with open(CRIME_MAP_PATH, "r", encoding="utf-8") as fh:
+                crime_mapping = json.load(fh)
+            logger.info("✅ Crime mapping loaded (%d items)", len(crime_mapping))
     except Exception as e:
-        logger.exception(f"❌ Crime mapping error: {e}")
-    
-    # Load place lookup
+        logger.debug("Crime mapping load failed: %s", e)
+
+    # place lookup CSV
     try:
         if os.path.exists(PLACE_LOOKUP_PATH):
-            dfp = pd.read_csv(PLACE_LOOKUP_PATH)
-            # Auto-detect columns
-            name_col = next((c for c in dfp.columns if 'place' in c.lower() or 'name' in c.lower()), dfp.columns[0])
-            lat_col = next((c for c in dfp.columns if 'lat' in c.lower()), dfp.columns[1])
-            lon_col = next((c for c in dfp.columns if 'lon' in c.lower()), dfp.columns[2])
-            
-            dfp = dfp.rename(columns={name_col: "Place", lat_col: "Latitude", lon_col: "Longitude"})
-            dfp['Latitude'] = pd.to_numeric(dfp['Latitude'], errors='coerce')
-            dfp['Longitude'] = pd.to_numeric(dfp['Longitude'], errors='coerce')
-            place_lookup_df = dfp.dropna(subset=['Latitude', 'Longitude'])
-            logger.info(f"✅ Loaded {len(place_lookup_df)} places")
+            pl = pd.read_csv(PLACE_LOOKUP_PATH)
+            name_col = next((c for c in pl.columns if "place" in c.lower() or "name" in c.lower()), pl.columns[0])
+            lat_col = next((c for c in pl.columns if "lat" in c.lower()), pl.columns[1] if len(pl.columns) > 1 else pl.columns[0])
+            lon_col = next((c for c in pl.columns if "lon" in c.lower()), pl.columns[2] if len(pl.columns) > 2 else pl.columns[0])
+            pl = pl.rename(columns={name_col: "Place", lat_col: "Latitude", lon_col: "Longitude"})
+            pl["Latitude"] = pd.to_numeric(pl["Latitude"], errors="coerce")
+            pl["Longitude"] = pd.to_numeric(pl["Longitude"], errors="coerce")
+            place_lookup_df = pl.dropna(subset=["Latitude", "Longitude"])
+            logger.info("✅ Place lookup loaded: %d rows", len(place_lookup_df))
+        else:
+            logger.warning("Place lookup file missing at %s", PLACE_LOOKUP_PATH)
     except Exception as e:
-        logger.exception(f"❌ Place lookup error: {e}")
-    
-    # Load crime data
+        logger.exception("Failed to load place_lookup.csv: %s", e)
+
+    # crime CSV (optional)
     try:
         if os.path.exists(CRIME_CSV_PATH):
-            dfc = pd.read_csv(CRIME_CSV_PATH)
-            lat_col = next((c for c in dfc.columns if 'lat' in c.lower()), None)
-            lon_col = next((c for c in dfc.columns if 'lon' in c.lower()), None)
-            
-            if lat_col and lon_col:
-                dfc[lat_col] = pd.to_numeric(dfc[lat_col], errors='coerce')
-                dfc[lon_col] = pd.to_numeric(dfc[lon_col], errors='coerce')
-                dfc = dfc.dropna(subset=[lat_col, lon_col])
-            
-            crime_df = dfc
-            build_cache(crime_df)
-            logger.info(f"✅ Crime data: {len(crime_df)} records, {len(location_cache)} clusters")
+            crime_df = pd.read_csv(CRIME_CSV_PATH)
+            # rebuild caches (this uses your original cluster logic)
+            try:
+                build_location_cache_from_df(crime_df)
+            except Exception as e:
+                logger.debug("build_location_cache_from_df failed: %s", e)
+            logger.info("✅ Crime CSV loaded: %d records", len(crime_df))
+        else:
+            logger.warning("Crime CSV not found at %s", CRIME_CSV_PATH)
     except Exception as e:
-        logger.exception(f"❌ Crime data error: {e}")
+        logger.exception("Failed to load crime CSV: %s", e)
+
+# call it once during startup (replace previous direct load call)
+safe_loads()
+
 
 @app.on_event("startup")
 def startup_event():
@@ -461,76 +461,63 @@ def heatmap(limit: int = Query(500, ge=1, le=2000)):
     return {"heatmap": data, "total": len(data)}
 
 @app.post("/api/safe-route")
-def safe_route(req: RouteRequest):
-    """Calculate safe route - OSRM INTEGRATED"""
-    def resolve(p):
-        if isinstance(p, dict):
-            return float(p.get("lat")), float(p.get("lon"))
+def safe_route(req: RouteReq = Body(...)):
+    """
+    Calculate safe route with OSRM if available; otherwise fallback to straight-line sampling.
+    Accepts src and dst as either {"lat":..,"lon":..} OR place string OR location_name.
+    """
+
+    def resolve_point(p: Any) -> Tuple[float, float]:
+        # Accept dicts with lat/lon or string place names (lookup or geocode)
+        if isinstance(p, dict) and "lat" in p and "lon" in p:
+            return float(p["lat"]), float(p["lon"])
         if isinstance(p, str):
-            # Try geocoding
-            lat, lon = geocode_location(p)
-            if lat:
-                return lat, lon
-            # Try place lookup
-            row = place_lookup_df[place_lookup_df["Place"].str.lower() == p.lower()]
-            if not row.empty:
-                return float(row.iloc[0]["Latitude"]), float(row.iloc[0]["Longitude"])
-        raise HTTPException(400, f"Cannot resolve location: {p}")
-    
-    src_lat, src_lon = resolve(req.src)
-    dst_lat, dst_lon = resolve(req.dst)
-    
-    # Call OSRM for real routing
+            # try place lookup first
+            if not place_lookup_df.empty:
+                row = place_lookup_df[place_lookup_df["Place"].str.lower() == p.lower()]
+                if not row.empty:
+                    return float(row.iloc[0]["Latitude"]), float(row.iloc[0]["Longitude"])
+            # geocode fallback
+            g = geocode_location(p)
+            if g[0] is not None:
+                return g
+        raise HTTPException(status_code=400, detail=f"Cannot resolve location: {p}")
+
+    src_lat, src_lon = resolve_point(req.src)
+    dst_lat, dst_lon = resolve_point(req.dst)
+
+    # Try OSRM route first
     try:
-        osrm_url = f"https://router.project-osrm.org/route/v1/driving/{src_lon},{src_lat};{dst_lon},{dst_lat}"
-        params = {"overview": "full", "geometries": "geojson", "steps": "true"}
-        
-        response = requests.get(osrm_url, params=params, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        
-        if data.get("routes"):
-            route = data["routes"][0]
-            geometry = route["geometry"]
-            coords = geometry["coordinates"]
-            
-            # Sample points for risk assessment
-            step = max(1, len(coords) // 30)
+        url = f"https://router.project-osrm.org/route/v1/driving/{src_lon},{src_lat};{dst_lon},{dst_lat}"
+        resp = requests.get(url, params={"overview": "full", "steps": "true", "geometries": "geojson"}, timeout=12)
+        resp.raise_for_status()
+        j = resp.json()
+        if j.get("routes"):
+            route = j["routes"][0]
+            coords = route["geometry"]["coordinates"]
+            # sample points to keep payload small
+            step = max(1, len(coords) // 120)
             samples = []
             for i in range(0, len(coords), step):
-                c = coords[i]
-                risk = calculate_risk_score(c[1], c[0])
-                samples.append({"lat": c[1], "lon": c[0], "risk": round(risk, 1)})
-            
-            avg_risk = sum(s["risk"] for s in samples) / len(samples)
-            
-            return {
-                "geometry": geometry,
-                "distance_km": round(route.get("distance", 0) / 1000, 2),
-                "duration_min": round(route.get("duration", 0) / 60, 1),
-                "average_risk": round(avg_risk, 1),
-                "samples": samples,
-                "note": "Route calculated using real road network"
-            }
+                lon, lat = coords[i][0], coords[i][1]
+                samples.append({"lat": lat, "lon": lon, "risk": calculate_risk_score(lat, lon)})
+            avg_risk = round(sum(s["risk"] for s in samples) / len(samples), 1) if samples else 50
+            return {"note": "osrm", "geometry": route["geometry"], "distance_m": route.get("distance"), "duration_s": route.get("duration"), "samples": samples, "average_risk": avg_risk}
     except Exception as e:
-        logger.error(f"OSRM error: {e}")
-    
-    # Fallback: straight line
-    n = 20
+        logger.debug("OSRM route failed or timed out: %s", e)
+
+    # Fallback straight-line interpolation
+    n = 40
     pts = []
     for i in range(n + 1):
         t = i / n
         lat = src_lat + t * (dst_lat - src_lat)
         lon = src_lon + t * (dst_lon - src_lon)
-        risk = calculate_risk_score(lat, lon)
-        pts.append({"lat": lat, "lon": lon, "risk": round(risk, 1)})
-    
-    return {
-        "route_points": pts,
-        "distance_km": round(haversine((src_lat, src_lon), (dst_lat, dst_lon)), 2),
-        "average_risk": round(sum(p["risk"] for p in pts) / len(pts), 1),
-        "note": "Fallback route (straight line)"
-    }
+        pts.append({"lat": lat, "lon": lon, "risk": calculate_risk_score(lat, lon)})
+    avg_risk = round(sum(p["risk"] for p in pts) / len(pts), 1)
+    dist_km = round(haversine((src_lat, src_lon), (dst_lat, dst_lon)), 2)
+    return {"note": "fallback", "route_points": pts, "distance_km": dist_km, "average_risk": avg_risk}
+
 
 @app.get("/api/dashboard")
 def dashboard():
@@ -566,41 +553,61 @@ def dashboard():
 
 @app.get("/api/crime-trends")
 def crime_trends():
-    """Crime trends analysis"""
+    """
+    Returns monthly trends (last 12 months), crime type counts and hourly distribution.
+    Guard against repeated insertion of __dt — only create __dt if missing.
+    """
     if crime_df is None:
-        return {"monthly_trends": [], "crime_types": {}, "hourly_distribution": {}}
-    
+        return {"monthly_trends": [], "crime_types": {}, "hourly": {}}
     df = crime_df.copy()
-    
-    # Build datetime
-    if 'Date_fixed' in df.columns:
-        df['__dt'] = pd.to_datetime(df['Date_fixed'], errors='coerce')
-    elif 'Date' in df.columns and 'Time' in df.columns:
-        df['__dt'] = pd.to_datetime(df['Date'].astype(str) + ' ' + df['Time'].astype(str), errors='coerce')
-    
+
+    # --- SAFE: only create __dt if it's not already present ---
+    try:
+        if "__dt" not in df.columns:
+            if "Date_fixed" in df.columns:
+                # parse with dayfirst=True to match dd-mm-yyyy formats
+                df["__dt"] = pd.to_datetime(df["Date_fixed"], errors="coerce", dayfirst=True)
+            elif "Date" in df.columns:
+                df["__dt"] = pd.to_datetime(df["Date"].astype(str), errors="coerce", dayfirst=True)
+    except Exception as e:
+        logger.exception("Failed to parse dates for crime_trends: %s", e)
+
+    # monthly trends (last 12 months)
     monthly = []
-    if '__dt' in df.columns and df['__dt'].notna().any():
-        m = df.dropna(subset=['__dt']).groupby([df['__dt'].dt.year, df['__dt'].dt.month]).size().reset_index(name='count')
-        m['date'] = pd.to_datetime(m[[m.columns[0], m.columns[1]]].assign(day=1))
-        m = m.sort_values('date').tail(12)
-        monthly = [{"date": r['date'].strftime("%Y-%m"), "count": int(r['count'])} for _, r in m.iterrows()]
-    
-    type_col = next((c for c in df.columns if c.lower() in ('type', 'crime')), None)
-    crime_types = df[type_col].value_counts().head(10).to_dict() if type_col else {}
-    
-    hour_col = next((c for c in df.columns if 'hour' in c.lower()), None)
-    if hour_col:
-        hourly = df[hour_col].value_counts().sort_index().to_dict()
-    elif '__dt' in df.columns and df['__dt'].notna().any():
-        hourly = df.dropna(subset=['__dt'])['__dt'].dt.hour.value_counts().sort_index().to_dict()
-    else:
-        hourly = {}
-    
-    return {
-        "monthly_trends": monthly,
-        "crime_types": {k: int(v) for k, v in crime_types.items()},
-        "hourly_distribution": {int(k): int(v) for k, v in hourly.items()}
-    }
+    try:
+        if "__dt" in df.columns and df["__dt"].notna().any():
+            p = df.dropna(subset=["__dt"])["__dt"].dt.to_period("M")
+            m = p.value_counts().sort_index().reset_index()
+            m.columns = ["period", "count"]
+            m["date"] = m["period"].dt.to_timestamp()
+            m = m.sort_values("date").tail(12)
+            monthly = [{"date": r["date"].strftime("%Y-%m"), "count": int(r["count"])} for _, r in m.iterrows()]
+    except Exception as e:
+        logger.exception("Failed building monthly trends: %s", e)
+
+    # crime types
+    type_col = next((c for c in df.columns if c.lower() in ("type", "crime", "offence")), None)
+    crime_types = {}
+    try:
+        if type_col is not None:
+            crime_types = df[type_col].value_counts().to_dict()
+    except Exception as e:
+        logger.debug("crime_types calc failed: %s", e)
+
+    # hourly distribution
+    hourly = {}
+    try:
+        if "__dt" in df.columns and df["__dt"].notna().any():
+            hourly = df.dropna(subset=["__dt"])["__dt"].dt.hour.value_counts().sort_index().to_dict()
+    except Exception as e:
+        logger.debug("hourly calc failed: %s", e)
+
+    # ensure serializable ints
+    crime_types = {str(k): int(v) for k, v in (crime_types or {}).items()}
+    hourly = {int(k): int(v) for k, v in (hourly or {}).items()}
+
+    return {"monthly_trends": monthly, "crime_types": crime_types, "hourly": hourly}
+
 
 if __name__ == "__main__":
     import uvicorn
