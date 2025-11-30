@@ -1471,16 +1471,6 @@
   // 2) Duration
   let durationMin = null;
 
-  if (typeof data.duration_min === 'number') {
-    durationMin = data.duration_min; // if backend ever adds it
-  }
-  else if (typeof data.duration_s === 'number') {
-    durationMin = data.duration_s / 60; // OSRM mode
-  }
-  else if (distanceKm !== null) {
-    // Fallback: approximate speed 30 km/h
-    durationMin = (distanceKm / 30) * 60;
-  }
 
   return {
     distanceKm,
@@ -1640,10 +1630,6 @@
                 <span class="font-bold text-lg">${distanceKm ? distanceKm.toFixed(2) + ' km' : 'N/A'}</span>
               </div>
 
-              <div class="flex items-center justify-between">
-                <span class="text-white/70">⏱️ Duration</span>
-                <span class="font-bold text-lg">${durationMin ? Math.round(durationMin) + ' min' : 'N/A'}</span>
-              </div>
 
               <div class="flex items-center justify-between">
                 <span class="text-white/70">🛡️ Safety</span>
